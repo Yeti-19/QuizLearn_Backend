@@ -1,7 +1,7 @@
 fastapi
 uvicorn
 requests
-youtube-transcript-api
+youtube_transcript_api
 pydantic
 sqlalchemy
 python-dotenv
