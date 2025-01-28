@@ -19,3 +19,4 @@ class UserResponse(BaseModel):
 
     class Config:
         orm_mode = True  # Tells Pydantic to treat SQLAlchemy models as dictionaries
+        
