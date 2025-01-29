@@ -6,6 +6,7 @@ from schemas import UserRegister, UserLogin, UserResponse, UserProgressResponse,
 from auth import register_user, authenticate_user, get_current_user
 from typing import List
 from sqlalchemy import desc
+from quiz import VideoRequest, get_youtube_transcript, generate_quiz_from_transcript
 
 app = FastAPI()
 
@@ -166,4 +167,17 @@ def get_users_with_rank(db: Session = Depends(get_db)):
 
     return response
 
+@app.post("/generate_quiz")
+async def generate_quiz(request: VideoRequest):
+    video_id = request.video_id
 
+    # Fetch the transcript
+    transcript = get_youtube_transcript(video_id)
+
+    if not transcript:
+        raise HTTPException(status_code=404, detail="No transcript available for the given video ID")
+
+    # Generate the quiz
+    quiz = generate_quiz_from_transcript(transcript)
+
+    return {"quiz": quiz}
