@@ -40,18 +40,18 @@ To set up and run the backend locally, follow these steps:
 
 Here are some of the key API endpoints exposed by the backend:
 
-POST /register/: Add your username, email id, password, phone number to register
-POST /login/: Add your username and password
-POST /update_tokens/{user_id}: Updated User's tokens and exp after watching a video and a quiz
-GET /users_with_rank/: Retrieve the leaderboard based on users' EXP.
-POST /generate_quiz/: AI generated quiz based on the youtube video you just watched.
+- POST /register/: Add your username, email id, password, phone number to register
+- POST /login/: Add your username and password
+- POST /update_tokens/{user_id}: Updated User's tokens and exp after watching a video and a quiz
+- GET /users_with_rank/: Retrieve the leaderboard based on users' EXP.
+- POST /generate_quiz/: AI generated quiz based on the youtube video you just watched.
 
 ## Technologies Used
 
-FastAPI: Web framework for building the backend API.
-Uvicorn: ASGI server for serving the FastAPI app.
-SQLAlchemy: ORM for database interaction.
-YouTube Transcript API: Used for extracting transcripts from YouTube videos to generate quizzes.
-Requests: For making HTTP requests (e.g., to fetch YouTube data).
-Pydantic: For data validation and parsing.
-Passlib & Bcrypt: For password hashing and secure authentication.
+- FastAPI: Web framework for building the backend API.
+- Uvicorn: ASGI server for serving the FastAPI app.
+- SQLAlchemy: ORM for database interaction.
+- YouTube Transcript API: Used for extracting transcripts from YouTube videos to generate quizzes.
+- Requests: For making HTTP requests (e.g., to fetch YouTube data).
+- Pydantic: For data validation and parsing.
+- Passlib & Bcrypt: For password hashing and secure authentication.
