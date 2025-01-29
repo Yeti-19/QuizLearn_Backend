@@ -1,36 +1,72 @@
-from fastapi import FastAPI, Depends, HTTPException, status  # Add status import here
-from sqlalchemy.orm import Session
-from db import get_db
-from models import User
-from schemas import UserRegister, UserLogin, UserResponse
-from auth import register_user, authenticate_user, get_current_user
-from typing import List
+from sqlalchemy import create_engine, Column, Integer, String, Float, ForeignKey  # Importing ForeignKey and Float
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import relationship
 
-app = FastAPI()
+DATABASE_URL = "sqlite:///./test.db"  # SQLite database URL
 
-# Route to register a new user
-@app.post("/register/")
-def register(user: UserRegister, db: Session = Depends(get_db)):
-    user = register_user(db, user.username, user.email, user.password, user.phone_number)
-    return {"message": "User created successfully", "username": user.username}
+Base = declarative_base()
 
-# Route to log in and get a token
-@app.post("/login/")
-def login(user: UserLogin, db: Session = Depends(get_db)):
-    user = authenticate_user(db, user.username, user.password)
-    if not user:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
-    return {"message": "User logged in successfully", "username": user.username}
+# Table for User Authentication and Profile Data
+class User(Base):
+    __tablename__ = 'users'
+    
+    id = Column(Integer, primary_key=True, index=True)
+    username = Column(String, unique=True, index=True)
+    email = Column(String, unique=True, index=True)
+    password = Column(String)  # Hashed password will be stored here
+    phone_number = Column(String)
+    
+    # One-to-many relationship with user progress (user can have multiple progress records)
+    progress = relationship("UserProgress", back_populates="user")
+    
+    # One-to-many relationship with courses enrolled (user can enroll in multiple courses)
+    courses = relationship("CourseEnrollment", back_populates="user")
 
-# Route to get current user details (requires a valid token)
-@app.get("/users/me")
-def get_user_me(current_user: dict = Depends(get_current_user)):
-    return current_user
+# Table for Tracking User's Progress and Activity
+class UserProgress(Base):
+    __tablename__ = 'user_progress'
+    
+    id = Column(Integer, primary_key=True, index=True)
+    time_spent = Column(Float)  # Time spent (in hours)
+    quizzes_done = Column(Integer)
+    tokens_earned = Column(Integer)
+    rank = Column(Integer)  # Rank determined by experience and level of the user
+    experience = Column(Integer)  # User experience, could be used for rank calculation
+    level = Column(Integer)  # Level of the user (could be a derived field from experience)
 
-# New Route to get all users
-@app.get("/users/", response_model=List[UserResponse])
-def get_all_users(db: Session = Depends(get_db)):
-    users = db.query(User).all()  # Query all users from the database
-    if not users:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No users found")
-    return users  # Return a list of users
+    # Foreign key to User
+    user_id = Column(Integer, ForeignKey('users.id'))
+    
+    user = relationship("User", back_populates="progress")
+
+# Table for Course Enrollment and Progress
+class CourseEnrollment(Base):
+    __tablename__ = 'course_enrollments'
+    
+    id = Column(Integer, primary_key=True, index=True)
+    course_name = Column(String)
+    progress_percentage = Column(Float)  # % of course progress
+    
+    # Foreign key to User
+    user_id = Column(Integer, ForeignKey('users.id'))
+    
+    user = relationship("User", back_populates="courses")
+
+# Table for Recommended YouTube Playlists
+class YouTubePlaylist(Base):
+    __tablename__ = 'youtube_playlists'
+    
+    id = Column(Integer, primary_key=True, index=True)
+    playlist_url = Column(String)  # URL of the YouTube playlist
+    description = Column(String)  # Short description of the playlist
+
+# Create the database engine
+engine = create_engine(DATABASE_URL)
+
+# Create the session
+from sqlalchemy.orm import sessionmaker
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+# Create the tables in the database (if they don't already exist)
+Base.metadata.create_all(bind=engine)
+
