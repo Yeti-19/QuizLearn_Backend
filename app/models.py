@@ -27,7 +27,7 @@ class UserProgress(Base):
 
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey('users.id'))
-    experience = Column(Integer,default = 1)
+    experience = Column(Integer)
     tokens_earned = Column(Integer)
     rank = Column(Integer)
     level = Column(Integer)
