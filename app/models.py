@@ -8,7 +8,7 @@ Base = declarative_base()
 
 # Table for User Authentication and Profile Data
 class User(Base):
-    _tablename_ = 'users'
+    __tablename__ = 'users'
     
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String, unique=True, index=True)
@@ -22,26 +22,24 @@ class User(Base):
     # One-to-many relationship with courses enrolled (user can enroll in multiple courses)
     courses = relationship("CourseEnrollment", back_populates="user")
 
-# Table for Tracking User's Progress and Activity
 class UserProgress(Base):
-    _tablename_ = 'user_progress'
-    
-    id = Column(Integer, primary_key=True, index=True)
-    time_spent = Column(Float)  # Time spent (in hours)
-    quizzes_done = Column(Integer)
-    tokens_earned = Column(Integer)
-    rank = Column(Integer)  # Rank determined by experience and level of the user
-    experience = Column(Integer)  # User experience, could be used for rank calculation
-    level = Column(Integer)  # Level of the user (could be a derived field from experience)
+    __tablename__ = 'user_progress'
 
-    # Foreign key to User
+    id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey('users.id'))
+    experience = Column(Integer)
+    tokens_earned = Column(Integer)
+    rank = Column(Integer)
+    level = Column(Integer)
+    badge = Column(String)  # badge column
     
-    user = relationship("User", back_populates="progress")
+    user = relationship('User', back_populates='progress')
+
+
 
 # Table for Course Enrollment and Progress
 class CourseEnrollment(Base):
-    _tablename_ = 'course_enrollments'
+    __tablename__ = 'course_enrollments'
     
     id = Column(Integer, primary_key=True, index=True)
     course_name = Column(String)
@@ -54,7 +52,7 @@ class CourseEnrollment(Base):
 
 # Table for Recommended YouTube Playlists
 class YouTubePlaylist(Base):
-    _tablename_ = 'youtube_playlists'
+    __tablename__ = 'youtube_playlists'
     
     id = Column(Integer, primary_key=True, index=True)
     playlist_url = Column(String)  # URL of the YouTube playlist
@@ -69,3 +67,4 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 # Create the tables in the database (if they don't already exist)
 Base.metadata.create_all(bind=engine)
+
