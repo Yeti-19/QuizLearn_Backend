@@ -20,8 +20,8 @@ To set up and run the backend locally, follow these steps:
 
 1. Clone this repository:
    ```bash
-   git clone https://github.com/yourusername/quizlearn-backend.git
-   cd quizlearn-backend
+   git clone https://github.com/yourusername/Quizlearn_Backend.git
+   cd Quizlearn_Backend
    
 2. Create a virtual environment (optional but recommended):
     ```bash 
