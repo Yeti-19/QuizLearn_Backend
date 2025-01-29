@@ -21,7 +21,7 @@ def initialize_user_progress(db: Session, user_id: int, tokens_earned: int = 0, 
         user_id=user_id,
         tokens_earned=tokens_earned,
         experience=experience_gained,
-        rank=1,  # Default rank
+        rank=user_id,  # Default rank
         level=1,  # Default level
         badge='Unbadged'  # Default badge
     )
